@@ -46,6 +46,12 @@ enum HetaoTemperatureHumidity {
     humidity
 }
 
+enum AnalogPinIN {
+    P0 = 100,  // MICROBIT_ID_IO_P0
+    P1 = 101,  // MICROBIT_ID_IO_P1
+    P2 = 102,  // MICROBIT_ID_IO_P2
+}
+
 //% weight=5 color=#FF7A4B icon="\uf015" block="传感器"
 //% groups=['音频模块', '超声波模块', '红外测温模块', '温湿度传感器', 'others']
 namespace HetaoSensor {
@@ -125,6 +131,7 @@ namespace HetaoSensor {
     /**
      * 
      */
+	let MRTDorPWM: boolean
     let PWMInited: boolean
     let LOW: number
     let HIGH: number
