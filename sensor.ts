@@ -131,7 +131,7 @@ namespace HetaoSensor {
     /**
      * 
      */
-	let MRTDorPWM: boolean
+    let MRTDorPWM: boolean
     let PWMInited: boolean
     let LOW: number
     let HIGH: number
