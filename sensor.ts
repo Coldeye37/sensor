@@ -250,7 +250,7 @@ namespace HetaoSensor {
     let mathKeyNumber = -1
     let mathKeyFunction = 'n'
     let mathFuncFlag = false
-    let prevKey = -1
+    let flag = false
     let key = -1
 
     //% blockId=hetao_number_keys block="读取计算键盘值"
@@ -259,11 +259,13 @@ namespace HetaoSensor {
         let volume = 0
         pins.i2cWriteNumber(16, 0, NumberFormat.UInt8LE, true)
         volume = pins.i2cReadNumber(16, NumberFormat.UInt32LE, false)
+        if (volume <= 0){
+            flag = true
+        }
 
-        prevKey = key
-        key = -1
-        if (volume > 0)
-        {
+
+        if (volume > 0 && flag) {
+            flag = false
             if (volume <= 1) {
                 key = 16
             }
@@ -278,7 +280,7 @@ namespace HetaoSensor {
                 mathFuncFlag = true
             }
             else {
-                if ((prevKey != key) && (key != -1)) {
+                if (key != -1) {
                     if (mathKeyNumber == -1) {
                         mathKeyNumber = 0;
                     }
@@ -286,8 +288,10 @@ namespace HetaoSensor {
                 }
             }
         }
-
-
+        else{
+            key = -1
+        }
+        
         return key
     }
 
@@ -332,7 +336,7 @@ namespace HetaoSensor {
                 return true
             }
         }
-            return false
+        return false
     }
 
     //% blockId=hetao_read_knob block="读取编码开关 %n|"
@@ -384,7 +388,7 @@ namespace HetaoSensor {
                 item.action()
             }
         }
-        basic.pause(20)
+        basic.pause(5)
     })
 
 
