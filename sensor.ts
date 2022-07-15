@@ -253,8 +253,6 @@ namespace HetaoSensor {
     let flag = false
     let key = -1
 
-    //% blockId=hetao_number_keys block="读取计算键盘值"
-    //% group="计算键盘"
     export function readNumberKeys(): number {
         let volume = 0
         pins.i2cWriteNumber(16, 0, NumberFormat.UInt8LE, true)
@@ -323,21 +321,21 @@ namespace HetaoSensor {
         kbCallback.push(item)
     }
 
-    //% blockId=key_pressed block="当按钮 %keychoose| 被按钮下"
-    //% group="计算键盘"
-    export function keyPressed(keychoose: KeyValue): boolean {
-        if (keychoose == 17){
-            if(key >= 0){
-                return true
-            }
-        }
-        else{
-            if (keychoose == key) {
-                return true
-            }
-        }
-        return false
-    }
+    // //% blockId=key_pressed block="当按钮 %keychoose| 被按钮下"
+    // //% group="计算键盘"
+    // export function keyPressed(keychoose: KeyValue): boolean {
+    //     if (keychoose == 17){
+    //         if(key >= 0){
+    //             return true
+    //         }
+    //     }
+    //     else{
+    //         if (keychoose == key) {
+    //             return true
+    //         }
+    //     }
+    //     return false
+    // }
 
     //% blockId=hetao_read_knob block="读取编码开关 %n|"
     //% group="编码开关"
@@ -390,7 +388,5 @@ namespace HetaoSensor {
         }
         basic.pause(5)
     })
-
-
 
 }
