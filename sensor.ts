@@ -1,4 +1,3 @@
-
 /**
  * 声音序号
  */
@@ -50,6 +49,51 @@ enum AnalogPinIN {
     P0 = 100,  // MICROBIT_ID_IO_P0
     P1 = 101,  // MICROBIT_ID_IO_P1
     P2 = 102,  // MICROBIT_ID_IO_P2
+}
+
+//%
+enum KeyValue {
+    //% block="0"
+    key0 = 0,
+    //% block="1"
+    key1 = 1,
+    //% block="2"
+    key2 = 2,
+    //% block="3"
+    key3 = 3,
+    //% block="4"
+    key4 = 4,
+    //% block="5"
+    key5 = 5,
+    //% block="6"
+    key6 = 6,
+    //% block="7"
+    key7 = 7,
+    //% block="8"
+    key8 = 8,
+    //% block="9"
+    key9 = 9,
+    //% block="+"
+    keyplus = 10,
+    //% block="-"
+    keyminus = 11,
+    //% block="*"
+    keymul = 12,
+    //% block="/"
+    keydiv = 13,
+    //% block="="
+    keyequal = 14,
+    //% block="."
+    keydot = 15,
+    //% block="清零"
+    keyclear = 16,
+    //% block="任意"
+    keyany = 17
+}
+
+interface KV {
+    key: KeyValue;
+    action: Action;
 }
 
 //% weight=5 color=#FF7A4B icon="\uf015" block="传感器"
@@ -201,23 +245,94 @@ namespace HetaoSensor {
                 return humidity
         }
     }
-	
-	//% blockId=hetao_number_keys block="读取计算键盘值"
+
+    let kbCallback: KV[] = []
+    let mathKeyNumber = -1
+    let mathKeyFunction = 'n'
+    let mathFuncFlag = false
+    let prevKey = -1
+    let key = -1
+
+    //% blockId=hetao_number_keys block="读取计算键盘值"
     //% group="计算键盘"
     export function readNumberKeys(): number {
         let volume = 0
         pins.i2cWriteNumber(16, 0, NumberFormat.UInt8LE, true)
         volume = pins.i2cReadNumber(16, NumberFormat.UInt32LE, false)
 
-        if (volume <= 0) {
-            return -1
+        prevKey = key
+        key = -1
+        if (volume > 0)
+        {
+            if (volume <= 1) {
+                key = 16
+            }
+            else {
+                key = Math.floor(Math.log(volume) / Math.log(2)) - 8
+            }
+
+            if (key > 9) {
+                let tmp = ["+", "-", "*", "/", "=", ".", "c"]
+                mathKeyNumber = -1;
+                mathKeyFunction = tmp[key - 10]
+                mathFuncFlag = true
+            }
+            else {
+                if ((prevKey != key) && (key != -1)) {
+                    if (mathKeyNumber == -1) {
+                        mathKeyNumber = 0;
+                    }
+                    mathKeyNumber = mathKeyNumber * 10 + key;
+                }
+            }
         }
-        else if (volume <= 1 && volume > 0) {
-            return 16
+
+
+        return key
+    }
+
+    //% blockId=key_math_number block="数字模式下读取数字键（数字输出）"
+    //% group="计算键盘"
+    export function keyMathNumber(): number {
+        return mathKeyNumber
+    }
+
+    //% blockId=key_math_function block="数字模式下读取功能键（字符串输出）"
+    //% group="计算键盘"
+    export function keyMathFunction(): string {
+
+        if(mathFuncFlag){
+            let output = 'n'
+            mathFuncFlag = false
+            output = mathKeyFunction
+            mathKeyFunction = 'n'
+            return output
         }
-        else {
-            return Math.floor(Math.log(volume) / Math.log(2)) - 8
+
+        return mathKeyFunction
+    }
+
+    //% blockId=kb_event block="当按钮 %value| 被按钮下"
+    //% group="计算键盘"
+    export function kbEvent(value: KeyValue, a: Action) {
+        let item: KV = { key: value, action: a }
+        kbCallback.push(item)
+    }
+
+    //% blockId=key_pressed block="当按钮 %keychoose| 被按钮下"
+    //% group="计算键盘"
+    export function keyPressed(keychoose: KeyValue): boolean {
+        if (keychoose == 17){
+            if(key >= 0){
+                return true
+            }
         }
+        else{
+            if (keychoose == key) {
+                return true
+            }
+        }
+            return false
     }
 
     //% blockId=hetao_read_knob block="读取编码开关 %n|"
@@ -261,5 +376,17 @@ namespace HetaoSensor {
             return -1
         }
     }
+
+    basic.forever(() => {
+        readNumberKeys()
+        for (let item of kbCallback) {
+            if (item.key == key) {
+                item.action()
+            }
+        }
+        basic.pause(20)
+    })
+
+
 
 }
