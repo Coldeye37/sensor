@@ -293,13 +293,13 @@ namespace HetaoSensor {
         return key
     }
 
-    //% blockId=key_math_number block="数字模式下读取数字键（数字输出）"
+    //% blockId=key_math_number block="连续读取数字键"
     //% group="计算键盘"
     export function keyMathNumber(): number {
         return mathKeyNumber
     }
 
-    //% blockId=key_math_function block="数字模式下读取功能键（字符串输出）"
+    //% blockId=key_math_function block="读取功能键"
     //% group="计算键盘"
     export function keyMathFunction(): string {
 
