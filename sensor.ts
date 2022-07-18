@@ -314,7 +314,7 @@ namespace HetaoSensor {
         return mathKeyFunction
     }
 
-    //% blockId=kb_event block="当按钮 %value| 被按钮下"
+    //% blockId=kb_event block="当按钮 %value| 被按下时"
     //% group="计算键盘"
     export function kbEvent(value: KeyValue, a: Action) {
         let item: KV = { key: value, action: a }
