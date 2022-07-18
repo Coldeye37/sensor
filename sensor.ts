@@ -77,9 +77,9 @@ enum KeyValue {
     keyplus = 10,
     //% block="-"
     keyminus = 11,
-    //% block="*"
+    //% block="×"
     keymul = 12,
-    //% block="/"
+    //% block="÷"
     keydiv = 13,
     //% block="="
     keyequal = 14,
